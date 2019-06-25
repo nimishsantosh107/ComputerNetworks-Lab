@@ -23,18 +23,15 @@ int main(int argc, char const *argv[]){
 	if((server_fd = socket(PF_INET,SOCK_STREAM,0)) == 0)
 		error("SOCKET FAILED");
 
-
 	//RESET servaddr / ASSIGN IP, PORT, FAMILY 
 	bzero(&servaddr, sizeof(servaddr)); 
 	if((inet_aton("192.168.1.7", &servaddr.sin_addr)) == 0)
 		error("IP ERROR");
-    //servaddr.sin_addr.s_addr = htonl(INADDR_ANY); 
-    //servaddr.sin_addr.s_addr = inet_addr("192.168.1.7");
     servaddr.sin_port = htons(PORT); 
     servaddr.sin_family = AF_INET; 
     
-
-    printf("%d\n%d\n%d\n",servaddr.sin_family,servaddr.sin_addr.s_addr,servaddr.sin_port);
+    //check
+    printf("%d\n%d\n",servaddr.sin_addr.s_addr,servaddr.sin_port);
 
 
 	//CLOSE SOCKET
