@@ -19,9 +19,11 @@ int main(int argc, char const *argv[]){
 	int server_fd;
 	struct sockaddr_in servaddr; 	
 
+
 	//CREATE SOCKET
 	if((server_fd = socket(PF_INET,SOCK_STREAM,0)) == 0)
 		error("SOCKET FAILED");
+
 
 	//RESET servaddr / ASSIGN IP, PORT, FAMILY 
 	bzero(&servaddr, sizeof(servaddr)); 
