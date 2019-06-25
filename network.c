@@ -34,7 +34,6 @@ int main(int argc, char const *argv[]){
     printf("%d\n%d\n",servaddr.sin_addr.s_addr,servaddr.sin_port);
 
 
-
 	//CLOSE SOCKET
 	close(server_fd);
 	return 0;
