@@ -16,13 +16,16 @@ int error(char *msg){
 }
 
 void chat(int sock_fd){
+	int n;
 	char buf[MAX];
 	
 	while(1){
-		bzero(buf, MAX);
+		//MESSAGE
 		printf("YOU: ");
-		scanf("%[^\n]s", buf);
-		write(sock_fd, buf, sizeof(buf));
+		n=0;
+		while ((buf[n++] = getchar()) != '\n')
+			;
+ 		write(sock_fd, buf, sizeof(buf));
 		if ((strncmp(buf, "exit", 4)) == 0) { 
 			bzero(buf, MAX);
             printf("CLIENT EXIT\n"); 
