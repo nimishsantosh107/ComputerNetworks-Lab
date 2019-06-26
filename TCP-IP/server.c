@@ -64,6 +64,7 @@ int main(int argc, char const *argv[]){
 
     //LISTEN ON PORT
     if ((listen(server_fd, 5)) != 0) error("LISTEN ERROR");
+    printf("SERVER LISTENING ON PORT 4000\n\n");
 
     //ACCEPT CONNECTION
     unsigned int len = sizeof(clientaddr);
