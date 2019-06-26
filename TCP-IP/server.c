@@ -15,6 +15,32 @@ int error(char *msg){
 	exit(1);
 }
 
+void chat(int client_fd){
+	char buf[MAX];
+	while(1){
+		//RESPONSE
+		bzero(buf, MAX);
+		read(client_fd, buf, sizeof(buf));
+		if ((strncmp(buf, "exit", 4)) == 0) { 
+			bzero(buff, MAX); 
+            printf("CLIENT EXIT\n"); 
+            break; 
+        } 
+		printf("CLIENT: %s", buf);
+		bzero(buff, MAX); 
+		//MESSAGE
+		printf("YOU: ");
+		scanf("%[^\n]s", buf);
+		write(client_fd, buf, sizeof(buf));
+		if ((strncmp(buf, "exit", 4)) == 0) { 
+			bzero(buf, MAX);
+            printf("CLIENT EXIT\n"); 
+            break; 
+        } 
+        bzero(buff, MAX); 
+	}
+}
+
 int main(int argc, char const *argv[]){
 	//DECLARATIONS
 	int server_fd, client_fd;
@@ -39,6 +65,9 @@ int main(int argc, char const *argv[]){
     unsigned int len = sizeof(clientaddr);
     if ((client_fd = accept(server_fd, (SA*)&clientaddr, &len)) <= 0) error("ACCEPT ERROR"); 
     printf("%d\n",client_fd );
+
+    //CHAT
+    chat(client_fd);
 
 	//CLOSE SOCKET
 	close(server_fd);

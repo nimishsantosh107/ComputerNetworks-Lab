@@ -19,13 +19,25 @@ void chat(int sock_fd){
 	char buf[MAX];
 	
 	while(1){
-		printf("You: ");
-		scanf("%[^\n]s",buf);
+		bzero(buf, MAX);
+		printf("YOU: ");
+		scanf("%[^\n]s", buf);
 		write(sock_fd, buf, sizeof(buf));
-		bzero(buf, sizeof(buf));
-		printf("Server: ");
-		read(sock_fd ,&buf, MAX);
-		printf("%s\n", buf);
+		if ((strncmp(buf, "exit", 4)) == 0) { 
+			bzero(buf, MAX);
+            printf("CLIENT EXIT\n"); 
+            break; 
+        } 
+		bzero(buf, MAX);
+		//RESPONSE FROM SERVER
+		read(sock_fd ,&buf, sizeof(buf));
+		if ((strncmp(buf, "exit", 4)) == 0) { 
+			bzero(buf, MAX);
+            printf("SERVER EXIT\n"); 
+            break; 
+        } 
+		printf("SERVER: %s\n", buf);
+		bzero(buf, MAX);
 	}
 }
 
@@ -46,6 +58,8 @@ int main(int argc, char const *argv[])
 
     //CONNECT
     if ((connect(sock_fd, (SA*)&servaddr, sizeof(servaddr))) != 0) error("CONNECT ERROR");
+    
+    //CHAT
     chat(sock_fd);
 
     //CLOSE SOCKET
