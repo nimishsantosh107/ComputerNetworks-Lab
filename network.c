@@ -6,6 +6,7 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
+#define SA struct sockaddr 
 #define PORT 4000
 #define MAX 256
 
@@ -19,22 +20,20 @@ int main(int argc, char const *argv[]){
 	int server_fd;
 	struct sockaddr_in servaddr; 	
 
-
 	//CREATE SOCKET
-	if((server_fd = socket(PF_INET,SOCK_STREAM,0)) == 0)
-		error("SOCKET FAILED");
-
+	if ((server_fd = socket(PF_INET,SOCK_STREAM,0)) < 1) error("SOCKET FAILED");
 
 	//RESET servaddr / ASSIGN IP, PORT, FAMILY 
 	bzero(&servaddr, sizeof(servaddr)); 
-	if((inet_aton("192.168.1.7", &servaddr.sin_addr)) == 0)
-		error("IP ERROR");
+	if ((inet_aton("127.0.0.1", &servaddr.sin_addr)) == 0) error("IP ERROR");
     servaddr.sin_port = htons(PORT); 
     servaddr.sin_family = AF_INET; 
-    
-    //check
-    printf("%d\n%d\n",servaddr.sin_addr.s_addr,servaddr.sin_port);
 
+    //BIND TO PORT
+    if ((bind(server_fd, (SA*)&servaddr, sizeof(servaddr))) != 0) error("BIND ERROR");
+
+    //LISTEN ON PORT
+    if ((listen(server_fd, 5)) != 0) error("LISTEN ERROR");
 
 	//CLOSE SOCKET
 	close(server_fd);

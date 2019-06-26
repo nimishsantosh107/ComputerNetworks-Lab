@@ -10,3 +10,7 @@
 *   servaddr.sin_addr.s_addr = htonl(INADDR_ANY); 
 *	if((inet_aton("192.168.1.x", &servaddr.sin_addr)) == 0) error("IP ERROR");
 *   servaddr.sin_addr.s_addr = inet_addr("192.168.1.x");
+
+### Functions:
+*	`inet_aton()` converts from . represetnation to network representation
+* 	`inet_ntoa()` reverses above.
