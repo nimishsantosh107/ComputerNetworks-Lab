@@ -25,20 +25,20 @@ void chat(int sock_fd){
 		n=0;
 		while ((buf[n++] = getchar()) != '\n')
 			;
- 		write(sock_fd, buf, sizeof(buf));
+		write(sock_fd, buf, sizeof(buf));
 		if ((strncmp(buf, "exit", 4)) == 0) { 
 			bzero(buf, MAX);
-            printf("CLIENT EXIT\n"); 
-            break; 
-        } 
+			printf("CLIENT EXIT\n"); 
+			break; 
+		} 
 		bzero(buf, MAX);
 		//RESPONSE FROM SERVER
 		read(sock_fd ,&buf, sizeof(buf));
 		if ((strncmp(buf, "exit", 4)) == 0) { 
 			bzero(buf, MAX);
-            printf("SERVER EXIT\n"); 
-            break; 
-        } 
+			printf("SERVER EXIT\n"); 
+			break; 
+		} 
 		printf("SERVER: %s\n", buf);
 		bzero(buf, MAX);
 	}
@@ -56,16 +56,16 @@ int main(int argc, char const *argv[])
 	//RESET servaddr / ASSIGN IP, PORT, FAMILY  OF **SERVER**
 	bzero(&servaddr, sizeof(servaddr)); 
 	if ((inet_aton("127.0.0.1", &servaddr.sin_addr)) == 0) error("IP ERROR");
-    servaddr.sin_port = htons(SERVER_PORT); 
-    servaddr.sin_family = PF_INET; 
+	servaddr.sin_port = htons(SERVER_PORT); 
+	servaddr.sin_family = PF_INET; 
 
     //CONNECT
-    if ((connect(sock_fd, (SA*)&servaddr, sizeof(servaddr))) != 0) error("CONNECT ERROR");
-    
+	if ((connect(sock_fd, (SA*)&servaddr, sizeof(servaddr))) != 0) error("CONNECT ERROR");
+	
     //CHAT
-    chat(sock_fd);
+	chat(sock_fd);
 
     //CLOSE SOCKET
-    close(sock_fd);
+	close(sock_fd);
 	return 0;
 }

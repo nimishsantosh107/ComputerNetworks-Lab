@@ -24,9 +24,9 @@ void chat(int client_fd){
 		read(client_fd, buf, sizeof(buf));
 		if ((strncmp(buf, "exit", 4)) == 0) { 
 			bzero(buf, MAX); 
-            printf("CLIENT EXIT\n"); 
-            break; 
-        } 
+			printf("CLIENT EXIT\n"); 
+			break; 
+		} 
 		printf("CLIENT: %s", buf);
 		bzero(buf, MAX); 
 		//MESSAGE
@@ -37,11 +37,11 @@ void chat(int client_fd){
 		write(client_fd, buf, sizeof(buf));
 		if ((strncmp(buf, "exit", 4)) == 0) { 
 			bzero(buf, MAX);
-            printf("SERVER EXIT\n"); 
-            break; 
-        } 
-        printf("\n");
-        bzero(buf, MAX); 
+			printf("SERVER EXIT\n"); 
+			break; 
+		} 
+		printf("\n");
+		bzero(buf, MAX); 
 	}
 }
 
@@ -56,22 +56,22 @@ int main(int argc, char const *argv[]){
 	//RESET servaddr / ASSIGN IP, PORT, FAMILY 
 	bzero(&servaddr, sizeof(servaddr)); 
 	if ((inet_aton("127.0.0.1", &servaddr.sin_addr)) == 0) error("IP ERROR");
-    servaddr.sin_port = htons(SERVER_PORT); 
-    servaddr.sin_family = PF_INET; 
+	servaddr.sin_port = htons(SERVER_PORT); 
+	servaddr.sin_family = PF_INET; 
 
     //BIND TO PORT
-    if ((bind(server_fd, (SA*)&servaddr, sizeof(servaddr))) != 0) error("BIND ERROR");
+	if ((bind(server_fd, (SA*)&servaddr, sizeof(servaddr))) != 0) error("BIND ERROR");
 
     //LISTEN ON PORT
-    if ((listen(server_fd, 5)) != 0) error("LISTEN ERROR");
-    printf("SERVER LISTENING ON PORT 4000\n\n");
+	if ((listen(server_fd, 5)) != 0) error("LISTEN ERROR");
+	printf("SERVER LISTENING ON PORT 4000\n\n");
 
     //ACCEPT CONNECTION
-    unsigned int len = sizeof(clientaddr);
-    if ((client_fd = accept(server_fd, (SA*)&clientaddr, &len)) <= 0) error("ACCEPT ERROR"); 
+	unsigned int len = sizeof(clientaddr);
+	if ((client_fd = accept(server_fd, (SA*)&clientaddr, &len)) <= 0) error("ACCEPT ERROR"); 
 
     //CHAT
-    chat(client_fd);
+	chat(client_fd);
 
 	//CLOSE SOCKET
 	close(server_fd);
