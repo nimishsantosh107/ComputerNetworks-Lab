@@ -18,9 +18,8 @@ int error(char *msg){
 int main(int argc, char const *argv[])
 {
 	int sock_fd;
-	int server_fd; //NOT USED
 	struct sockaddr_in servaddr;
-	char *message = "Message from client";
+	char *message = "message from client";
 
 	//CREATE SOCKET
 	if((sock_fd = socket(PF_INET, SOCK_DGRAM, 0)) <= 0) error("\033[0;31mSOCKET ERROR\033[0m");
@@ -32,7 +31,7 @@ int main(int argc, char const *argv[])
 	servaddr.sin_family = PF_INET;
 
 	//SEND MESSAGE
-	sendto(sock_fd, (char *)message , MAX, MSG_DONTROUTE, (SA*)&servaddr, sizeof(servaddr));
+	sendto(sock_fd, message , MAX, MSG_DONTROUTE, (SA*)&servaddr, sizeof(servaddr));
 
 	//CLOSE SOCKET
 	close(sock_fd);
