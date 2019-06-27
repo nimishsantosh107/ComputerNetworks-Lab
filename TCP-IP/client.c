@@ -46,7 +46,6 @@ void chat(int sock_fd){
 
 int main(int argc, char const *argv[])
 {
-	//DECLARATIONS
 	int sock_fd = 0, server_fd;
 	struct sockaddr_in servaddr; 
 

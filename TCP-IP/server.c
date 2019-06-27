@@ -46,8 +46,8 @@ void chat(int client_fd){
 	}
 }
 
-int main(int argc, char const *argv[]){
-	//DECLARATIONS
+int main(int argc, char const *argv[])
+{
 	int server_fd, client_fd;
 	struct sockaddr_in servaddr, clientaddr; 	
 
