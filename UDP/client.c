@@ -17,12 +17,22 @@ int error(char *msg){
 
 int main(int argc, char const *argv[])
 {
-	int sock_fd, server_fd;
-	struct sockaddr_in serveraddr;
+	int sock_fd;
+	int server_fd; //NOT USED
+	struct sockaddr_in servaddr;
+	char *message = "Message from client";
 
 	//CREATE SOCKET
-	if((sock_fd = socket(PF_INET, SOCK_DGRAM, 0)) <= 0) error("SOCKET ERROR");
+	if((sock_fd = socket(PF_INET, SOCK_DGRAM, 0)) <= 0) error("\033[0;31mSOCKET ERROR\033[0m");
 
+	//CLEAR servaddr / SET IP,PORT,FAMILY OF SERVER
+	bzero(&servaddr , sizeof(servaddr));
+	if((inet_aton("127.0.0.1", &servaddr.sin_addr)) == 0) error("\033[0;31mIP ERROR\033[0m");
+	servaddr.sin_port = htons(SERVER_PORT);
+	servaddr.sin_family = PF_INET;
+
+	//SEND MESSAGE
+	sendto(sock_fd, (char *)message , MAX, MSG_DONTROUTE, (SA*)&servaddr, sizeof(servaddr));
 
 	//CLOSE SOCKET
 	close(sock_fd);

@@ -17,24 +17,32 @@ int error(char *msg){
 
 int main(int argc, char const *argv[])
 {
-	int server_fd, client_fd;
+	int bytecount;
+	char buf[MAX];
+	int server_fd;
 	struct sockaddr_in servaddr, clientaddr;
 	
 	//CREATE SOCKET
-	if ((server_fd = socket(PF_INET, SOCK_DGRAM, 0)) <= 0) error("SOCKET ERROR");
+	if ((server_fd = socket(PF_INET, SOCK_DGRAM, 0)) <= 0) error("\033[0;31mSOCKET ERROR\033[0m");
 
 	//CLEAR servaddr / SET IP,PORT,FAMILY OF SERVER
 	bzero(&servaddr , sizeof(servaddr));
-	if((inet_aton("127.0.0.1", &servaddr.sin_addr)) == 0) error("IP ERROR");
-	servaddr.sin_port = htons(PORT);
+	if((inet_aton("127.0.0.1", &servaddr.sin_addr)) == 0) error("\033[0;31mIP ERROR\033[0m");
+	servaddr.sin_port = htons(SERVER_PORT);
 	servaddr.sin_family = PF_INET;
 
 	//BIND 
-	if((bind(server_fd, (SA*)&servaddr, sizeof(servaddr)) !=0 ) error("BIND ERROR");
+	if((bind(server_fd, (SA*)&servaddr, sizeof(servaddr))) !=0 ) error("\033[0;31mBIND ERROR\033[0m");
+	printf("\033[1;36mSERVER WAITING ON PORT 4000\033[0m\n\n");
 
-	
+	//RECIEVE DATA
+	unsigned int len = sizeof(clientaddr);
+	bytecount = recvfrom(server_fd, &buf, MAX, MSG_WAITALL, (SA*)&clientaddr, &len);
+	buf[bytecount] = '\0';
+
+	printf("%s\n", buf);
 
 	//CLOSE SOCKET
-	close(sock_fd);
+	close(server_fd);
 	return 0;
 }
