@@ -22,9 +22,6 @@ int main(int argc, char const *argv[])
 	struct sockaddr_in servaddr, clientaddr;
 	int n;
 	char buf[MAX],buf1[MAX];
-	int clients[3];
-	int client_len = 0,active = 0;
-	char exitcode = 0;
 
 	//CREATE SOCKET
 	if ((server_fd = socket(PF_INET,SOCK_STREAM,0)) <= 0) error("\033[0;31mSOCKET FAILED\033[0m");
@@ -43,49 +40,39 @@ int main(int argc, char const *argv[])
 	printf("\033[1;36mSERVER LISTENING ON PORT 4000\033[0m\n\n");
 
     //ACCEPT CONNECTION
-	do{
-		unsigned int len = sizeof(clientaddr);
-		if ((clients[client_len++] = accept(server_fd, (SA*)&clientaddr, &len)) <= 0) error("\033[0;31mACCEPT ERROR\033[0m");
+	unsigned int len = sizeof(clientaddr);
+	if ((client_fd = accept(server_fd, (SA*)&clientaddr, &len)) <= 0) error("\033[0;31mACCEPT ERROR\033[0m");
 
-		int pid = fork();
-		
-			if(pid > 0){
-				while(1){
-					read(clients[active], buf1, sizeof(buf1));
-					if ((strncmp(buf1, "exit", 4)) == 0) { 
-						bzero(buf1, MAX); 
-						printf("\033[1;31mCLIENT EXIT\033[0m\n");
-						exitcode = 1;
-						break; 
-					} 
-					printf("\033[1;34mCLIENT:\033[0m %s", buf1);
-					bzero(buf1, MAX);
-				}
+	int pid = fork();
+	if(pid > 0){
+		while(1){
+			read(client_fd, buf1, sizeof(buf1));
+			if ((strncmp(buf1, "exit", 4)) == 0) { 
+				bzero(buf1, MAX); 
+				printf("\033[1;31mCLIENT EXIT\033[0m\n");
+				exitcode = 1;
+				break; 
+			} 
+			printf("\033[1;34mCLIENT:\033[0m %s", buf1);
+			bzero(buf1, MAX);
+		}
+	}
+	else{
+		while(1){	
+			n=0;
+			while ((buf[n++] = getchar()) != '\n') 
+				;
+			if ((strncmp(buf, "exit", 4)) == 0) { 
+				bzero(buf, MAX);
+				printf("");
+				printf("\033[1;31mSERVER EXIT\033[0m\n"); 
+				exitcode = 1;
+				break; 
 			}
-			else{
-				while(1){	
-					n=0;
-					while ((buf[n++] = getchar()) != '\n') 
-						;
-					if ((strncmp(buf, "exit", 4)) == 0) { 
-						bzero(buf, MAX);
-						printf("");
-						printf("\033[1;31mSERVER EXIT\033[0m\n"); 
-						exitcode = 1;
-						break; 
-					}
-					if (((strncmp(buf, "0", 1)) == 0) || ((strncmp(buf, "1", 1)) == 0) || ((strncmp(buf, "2", 1)) == 0) ) { 
-						active = atoi(buf);
-						bzero(buf, MAX);
-						break; 
-					} 
-					write(clients[active], buf, sizeof(buf));
-					bzero(buf, MAX); 
-				}
-			}
-	}while(exitcode!=1);
-
-
+			write(client_fd, buf, sizeof(buf));
+			bzero(buf, MAX); 
+		}
+	}
 
 	//CLOSE SOCKET
 	close(server_fd);
