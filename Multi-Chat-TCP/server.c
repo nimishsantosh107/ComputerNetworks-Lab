@@ -18,10 +18,12 @@ int error(char *msg){
 
 int main(int argc, char const *argv[])
 {
-	int server_fd, client_fd;
+	int server_fd, client_fd , sel_sd;
+	int clients[3];
 	struct sockaddr_in servaddr, clientaddr;
 	int n;
-	char buf[MAX],buf1[MAX];
+	char buf[MAX];
+	fd_set readfds;
 
 	//CREATE SOCKET
 	if ((server_fd = socket(PF_INET,SOCK_STREAM,0)) <= 0) error("\033[0;31mSOCKET FAILED\033[0m");
@@ -43,34 +45,37 @@ int main(int argc, char const *argv[])
 	unsigned int len = sizeof(clientaddr);
 	if ((client_fd = accept(server_fd, (SA*)&clientaddr, &len)) <= 0) error("\033[0;31mACCEPT ERROR\033[0m");
 
-	int pid = fork();
-	if(pid > 0){
-		while(1){
-			read(client_fd, buf1, sizeof(buf1));
-			if ((strncmp(buf1, "exit", 4)) == 0) { 
-				bzero(buf1, MAX); 
-				printf("\033[1;31mCLIENT EXIT\033[0m\n");
-				exitcode = 1;
-				break; 
-			} 
-			printf("\033[1;34mCLIENT:\033[0m %s", buf1);
-			bzero(buf1, MAX);
+	while(1){
+		FD_ZERO(&readfds);
+		FD_SET(server_fd, &readfds);
+		sel_sd = server_fd;
+		for (int i = 0; i < 3; i++) {
+			int sd = = clients[i];
+			if(sd > 0) FD_SET(sd, &readfds);
+			if(sd > sel_sd) sel_sd = sd;
 		}
-	}
-	else{
-		while(1){	
-			n=0;
-			while ((buf[n++] = getchar()) != '\n') 
-				;
-			if ((strncmp(buf, "exit", 4)) == 0) { 
-				bzero(buf, MAX);
-				printf("");
-				printf("\033[1;31mSERVER EXIT\033[0m\n"); 
-				exitcode = 1;
-				break; 
+		int activity = select(selsd+1, &readfds, NULL, NULL, NULL);
+		if(FD_ISSET(server_fd , &readfds)) {
+			if ((client_fd = accept(server_fd, (SA*)&clientaddr, &len)) <= 0) error("\033[0;31mACCEPT ERROR\033[0m");
+			for (int i = 0; i < 5; i++){
+				if (clients[i] == 0) {
+					clients[i] = client_fd;
+					break;
+				}
 			}
-			write(client_fd, buf, sizeof(buf));
-			bzero(buf, MAX); 
+		}
+		for(int i = 0; i<5; i++) {
+			if(FD_ISSET(clients[i], &readfds)) {
+				read(clients[i], buf, MAX);
+				if(buff[0] == "*") {
+					close(clients[i]);
+					clients[i] = 0;
+					printf("CLIENT CLOSED\n");
+				}else {
+					printf("CLIENT %d: %s\n", i, buf );
+				}
+				bzero(buf, MAX);
+			}
 		}
 	}
 

@@ -34,33 +34,18 @@ int main(int argc, char const *argv[])
     //CONNECT
 	if ((connect(sock_fd, (SA*)&servaddr, sizeof(servaddr))) != 0) error("\033[0;31mCONNECT ERROR\033[0m");
 	
-	int pid = fork();
-	if(pid > 0){
-		while(1){
-			read(sock_fd, buf1, sizeof(buf1));
-			if ((strncmp(buf1, "exit", 4)) == 0) { 
-				bzero(buf1, MAX); 
-				printf("\033[1;31mSERVER EXIT\033[0m\n"); 
-				break; 
-			} 
-			printf("\033[1;34mSERVER:\033[0m %s", buf1);
-			bzero(buf1, MAX);
-		}
-	}
-	else{
-		while(1){	
-			n=0;
-			while ((buf[n++] = getchar()) != '\n') 
-				;
-			write(sock_fd, buf, sizeof(buf));
-			if ((strncmp(buf, "exit", 4)) == 0) { 
-				bzero(buf, MAX);
-				printf("");
-				printf("\033[1;31mCLIENT EXIT\033[0m\n"); 
-				break; 
-			} 
-			bzero(buf, MAX); 
-		}
+	while(1){	
+		n=0;
+		while ((buf[n++] = getchar()) != '\n') 
+			;
+		write(sock_fd, buf, sizeof(buf));
+		if ((strncmp(buf, "exit", 4)) == 0) { 
+			bzero(buf, MAX);
+			printf("");
+			printf("\033[1;31mCLIENT EXIT\033[0m\n"); 
+			break; 
+		} 
+		bzero(buf, MAX); 
 	}
 
 	//CLOSE SOCKET
