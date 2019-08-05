@@ -7,7 +7,7 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #define SA struct sockaddr
-#define SERVER_PORT 4000
+#define SERVER_PORT 5000
 #define MAX 256
 
 int error(char *msg){

@@ -7,7 +7,7 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #define SA struct sockaddr
-#define SERVER_PORT 5000
+#define SERVER_PORT 4000
 #define MAX 256
 
 int error(char *msg){
@@ -38,15 +38,16 @@ int main(int argc, char const *argv[])
 			n=0;
 			while ((buf[n++] = getchar()) != '\n') 
 				;
-			sendto(sock_fd, buf , MAX, MSG_DONTWAIT, (SA*)&servaddr, sizeof(servaddr));
+			buf[n-1]='\0';
+			sendto(sock_fd, buf , n, MSG_DONTWAIT, (SA*)&servaddr, sizeof(servaddr));
 			bzero(buf, MAX); 
 		}
 	}else{
 		while(1){
 			unsigned int len = sizeof(servaddr);
 			bytecount = recvfrom(sock_fd, &buf, MAX, MSG_DONTWAIT, (SA*)&servaddr, &len);
-			buf[bytecount] = '\0';
-			printf("%s", buf);
+			if(bytecount != -1)
+				printf("RES:%s\n", buf);
 			bzero(buf, MAX); 
 		}
 	}
