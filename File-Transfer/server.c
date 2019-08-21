@@ -45,6 +45,7 @@ int main(int argc, char const *argv[])
 
 	//GET FILE NAME
 	read(client_fd, buf, MAX);
+	printf("FILE REQUESTED: %s\n",buf );
 
 	//OPEN FILE
 	if((fd = open(buf,O_RDONLY)) <= 0) error("\033[0;31mFILE OPEN ERROR\033[0m");

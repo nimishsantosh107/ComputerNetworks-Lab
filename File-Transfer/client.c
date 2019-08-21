@@ -35,11 +35,15 @@ int main(int argc, char const *argv[])
 	if ((connect(sock_fd, (SA*)&servaddr, sizeof(servaddr))) != 0) error("\033[0;31mCONNECT ERROR\033[0m");
 
 	//SEND FILE NAME
+	printf("GETTING: %s\n",argv[1]);
 	write(sock_fd, argv[1], MAX);
 
 	//GET CONTENT BACK
 	read(sock_fd, buf,  MAX);
 	printf("FILE:\n%s\n", buf);
+	int newfd = open(argv[2], O_WRONLY | O_CREAT);
+	printf("FILE SAVED AS: %s\n", argv[2]);
+	write(newfd, buf, MAX);
 
 	//CLOSE
 	bzero(buf, MAX); 
