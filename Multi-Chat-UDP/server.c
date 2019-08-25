@@ -23,17 +23,17 @@ int main(int argc, char const *argv[])
 	struct sockaddr_in servaddr, clientaddr;
 	
 	//CREATE SOCKET
-	if ((server_fd = socket(PF_INET, SOCK_DGRAM, 0)) <= 0) error("\033[0;31mSOCKET ERROR\033[0m");
+	if ((server_fd = socket(PF_INET, SOCK_DGRAM, 0)) <= 0) error("SOCKET ERROR");
 
 	//CLEAR servaddr / SET IP,PORT,FAMILY OF SERVER
 	bzero(&servaddr , sizeof(servaddr));
-	if((inet_aton("127.0.0.1", &servaddr.sin_addr)) == 0) error("\033[0;31mIP ERROR\033[0m");
+	if((inet_aton("127.0.0.1", &servaddr.sin_addr)) == 0) error("IP ERROR");
 	servaddr.sin_port = htons(SERVER_PORT);
 	servaddr.sin_family = PF_INET;
 
 	//BIND 
-	if((bind(server_fd, (SA*)&servaddr, sizeof(servaddr))) !=0 ) error("\033[0;31mBIND ERROR\033[0m");
-	printf("\033[1;36mSERVER WAITING ON PORT 4000\033[0m\n\n");
+	if((bind(server_fd, (SA*)&servaddr, sizeof(servaddr))) !=0 ) error("BIND ERROR");
+	printf("SERVER WAITING ON PORT 4000\n\n");
 
 	while(1){
 		//RECIEVE DATA
