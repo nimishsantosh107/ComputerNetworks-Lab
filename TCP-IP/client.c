@@ -15,39 +15,12 @@ int error(char *msg){
 	exit(1);
 }
 
-void chat(int sock_fd){
-	int n;
-	char buf[MAX];
-	
-	while(1){
-		//MESSAGE
-		printf("YOU: ");
-		n=0;
-		while ((buf[n++] = getchar()) != '\n')
-			;
-		write(sock_fd, buf, sizeof(buf));
-		if ((strncmp(buf, "exit", 4)) == 0) { 
-			bzero(buf, MAX);
-			printf("CLIENT EXIT\n"); 
-			break; 
-		} 
-		bzero(buf, MAX);
-		//RESPONSE FROM SERVER
-		read(sock_fd ,&buf, sizeof(buf));
-		if ((strncmp(buf, "exit", 4)) == 0) { 
-			bzero(buf, MAX);
-			printf("SERVER EXIT\n"); 
-			break; 
-		} 
-		printf("SERVER: %s\n", buf);
-		bzero(buf, MAX);
-	}
-}
-
 int main(int argc, char const *argv[])
 {
 	int sock_fd = 0, server_fd;
 	struct sockaddr_in servaddr; 
+	int n;
+	char buf[MAX];
 
 	//CREATE SOCKET
 	if ((sock_fd = socket(PF_INET,SOCK_STREAM,0)) <= 0) error("SOCKET FAILED");
@@ -61,8 +34,19 @@ int main(int argc, char const *argv[])
     //CONNECT
 	if ((connect(sock_fd, (SA*)&servaddr, sizeof(servaddr))) != 0) error("CONNECT ERROR");
 	
-    //CHAT
-	chat(sock_fd);
+    //CLIENT(THIS)
+    bzero(buf, MAX);
+	printf("YOU: ");
+	n=0;
+	while ((buf[n++] = getchar()) != '\n')
+		;
+	write(sock_fd, buf, sizeof(buf));
+	bzero(buf, MAX);
+	//SERVER
+	read(sock_fd ,&buf, sizeof(buf));
+	printf("SERVER: %s\n", buf);
+	bzero(buf, MAX);
+
 
     //CLOSE SOCKET
 	close(sock_fd);

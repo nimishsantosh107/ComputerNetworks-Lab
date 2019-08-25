@@ -15,41 +15,12 @@ int error(char *msg){
 	exit(1);
 }
 
-void chat(int client_fd){
-	int n;
-	char buf[MAX];
-
-	while(1){
-		//RESPONSE FROM CLIENT
-		read(client_fd, buf, sizeof(buf));
-		if ((strncmp(buf, "exit", 4)) == 0) { 
-			bzero(buf, MAX); 
-			printf("CLIENT EXIT\n"); 
-			break; 
-		} 
-		printf("CLIENT: %s", buf);
-		bzero(buf, MAX); 
-		//MESSAGE
-		printf("YOU: ");
-		n=0;
-		while ((buf[n++] = getchar()) != '\n') 
-			;
-		write(client_fd, buf, sizeof(buf));
-		if ((strncmp(buf, "exit", 4)) == 0) { 
-			bzero(buf, MAX);
-			printf("");
-			printf("SERVER EXIT\n"); 
-			break; 
-		} 
-		printf("\n");
-		bzero(buf, MAX); 
-	}
-}
-
 int main(int argc, char const *argv[])
 {
 	int server_fd, client_fd;
-	struct sockaddr_in servaddr, clientaddr; 	
+	struct sockaddr_in servaddr, clientaddr; 
+	int n;
+	char buf[MAX];	
 
 	//CREATE SOCKET
 	if ((server_fd = socket(PF_INET,SOCK_STREAM,0)) <= 0) error("SOCKET FAILED");
@@ -71,8 +42,18 @@ int main(int argc, char const *argv[])
 	unsigned int len = sizeof(clientaddr);
 	if ((client_fd = accept(server_fd, (SA*)&clientaddr, &len)) <= 0) error("ACCEPT ERROR"); 
 
-    //CHAT
-	chat(client_fd);
+    //CLIENT
+    bzero(buf, MAX);
+	read(client_fd ,&buf, sizeof(buf));
+	printf("CLIENT: %s", buf);
+	bzero(buf, MAX);
+	//SERVER(THIS)
+	printf("YOU: ");
+	n=0;
+	while ((buf[n++] = getchar()) != '\n')
+		;
+	write(client_fd, buf, sizeof(buf));
+	bzero(buf, MAX);
 
 	//CLOSE SOCKET
 	close(server_fd);
