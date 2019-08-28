@@ -6,8 +6,8 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
-#define SA struct sockaddr
-#define SERVER_PORT 5000
+#define SA struct sockaddr 
+#define SERVER_PORT 4000
 #define MAX 256
 
 int error(char *msg){
@@ -17,37 +17,53 @@ int error(char *msg){
 
 int main(int argc, char const *argv[])
 {
-	char IP[12];
-	strcpy(IP,"192.168.1.1");
-	char MAC[50];
-	strcpy(MAC,"se:rv:er:00:11");
-	int bytecount;
-	char buf[MAX];
-	int server_fd;
-	struct sockaddr_in servaddr, clientaddr;
-	
+	int server_fd, client_fd;
+	int top;
+	int clients[3];
+	struct sockaddr_in servaddr, clientaddr; 
+	//PACKET
+	int n;
+	char buf[MAX];	
+	//IP & MAC
+	char IP[]="192.168.1.1";
+	char MAC[]="aa:bb:cc:dd";
+	printf("HELLO: %s  %lu\t%lu  %s\n", IP,sizeof(IP),strlen(MAC),MAC);
+
 	//CREATE SOCKET
-	if ((server_fd = socket(PF_INET, SOCK_DGRAM, 0)) <= 0) error("\033[0;31mSOCKET ERROR\033[0m");
+	if ((server_fd = socket(PF_INET,SOCK_STREAM,0)) <= 0) error("SOCKET FAILED");
 
-	//CLEAR servaddr / SET IP,PORT,FAMILY OF SERVER
-	bzero(&servaddr , sizeof(servaddr));
-	if((inet_aton("127.0.0.1", &servaddr.sin_addr)) == 0) error("\033[0;31mIP ERROR\033[0m");
-	servaddr.sin_port = htons(SERVER_PORT);
-	servaddr.sin_family = PF_INET;
+	//RESET servaddr / ASSIGN IP, PORT, FAMILY 
+	bzero(&servaddr, sizeof(servaddr)); 
+	if ((inet_aton("127.0.0.1", &servaddr.sin_addr)) == 0) error("IP ERROR");
+	servaddr.sin_port = htons(SERVER_PORT); 
+	servaddr.sin_family = PF_INET; 
 
-	//BIND 
-	if((bind(server_fd, (SA*)&servaddr, sizeof(servaddr))) !=0 ) error("\033[0;31mBIND ERROR\033[0m");
-	printf("\033[1;36mSERVER WAITING ON PORT 4000\033[0m\n\n");
+    //BIND TO PORT
+	if ((bind(server_fd, (SA*)&servaddr, sizeof(servaddr))) != 0) error("BIND ERROR");
 
+    //LISTEN ON PORT
+	if ((listen(server_fd, 5)) != 0) error("\033[0;31mLISTEN ERROR");
+	printf("SERVER LISTENING ON PORT 4000\n\n");
+
+    //ACCEPT CONNECTION
 	while(1){
-		//RECIEVE DATA
 		unsigned int len = sizeof(clientaddr);
-		bytecount = recvfrom(server_fd, &buf, MAX, MSG_WAITALL, (SA*)&clientaddr, &len);
-		buf[bytecount] = '\0';
-		sendto(server_fd, buf , MAX, MSG_DONTWAIT, (SA*)&clientaddr, sizeof(clientaddr));
-		printf("LOG: %s", buf);
-		bzero(buf, MAX); 
+		if ((client_fd = accept(server_fd, (SA*)&clientaddr, &len)) <= 0) error("ACCEPT ERROR"); 
+		clients[top++] = client_fd;
+		printf("CLIENTS CONNECTED %d\n", top);
 	}
+    //CLIENT
+ 	// bzero(buf, MAX);
+	// read(client_fd ,&buf, sizeof(buf));
+	// printf("CLIENT: %s", buf);
+	// bzero(buf, MAX);
+	// //SERVER(THIS)
+	// printf("YOU: ");
+	// n=0;
+	// while ((buf[n++] = getchar()) != '\n')
+	// 	;
+	// write(client_fd, buf, sizeof(buf));
+	// bzero(buf, MAX);
 
 	//CLOSE SOCKET
 	close(server_fd);
