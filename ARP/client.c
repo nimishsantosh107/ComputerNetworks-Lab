@@ -24,7 +24,6 @@ int main(int argc, char const *argv[])
 	char buf[MAX];
 	//IP & MAC
 	//char IP[] = argv[1],MAC[] = argv[2];
-	printf("HELLO: %s  %lu\t%lu  %s\n", IP,sizeof(IP),strlen(MAC),MAC);
 
 	//CREATE SOCKET
 	if ((sock_fd = socket(PF_INET,SOCK_STREAM,0)) <= 0) error("SOCKET FAILED");
@@ -35,7 +34,7 @@ int main(int argc, char const *argv[])
 	servaddr.sin_port = htons(SERVER_PORT); 
 	servaddr.sin_family = PF_INET; 
 
-    //CONNECT
+	//CONNECT
 	if ((connect(sock_fd, (SA*)&servaddr, sizeof(servaddr))) != 0) error("CONNECT ERROR");
 	
  	// //CLIENT(THIS)

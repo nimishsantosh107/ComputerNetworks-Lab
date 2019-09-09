@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
+#include <netdb.h>
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
@@ -18,24 +19,19 @@ typedef struct node {
 
 Node* head = NULL;
 
-void setup(){
-	Node* new1 = (Node*)malloc(sizeof(Node));
-	Node* new2 = (Node*)malloc(sizeof(Node));
-	Node* new3 = (Node*)malloc(sizeof(Node));
-	head = new1;
-	strcpy(new1->domain,"www.google.com");
-	new1->domain[14] = '\0';
-	strcpy(new1->ip,"157.240.23.35");
-	strcpy(new2->domain,"www.facebook.com");
-	new2->domain[16] = '\0';
-	strcpy(new2->ip,"174.210.43.35");
-	strcpy(new3->domain,"www.steam.com");
-	new3->domain[13] = '\0';
-	strcpy(new3->ip,"192.178.65.35");
-	new1->next = new2;
-	new2->next = new3;
-	new3->next = NULL;
-}
+Node* insert( Node *head, char domain[], char ip[]) {
+	Node *temp = head;
+	Node *new = (Node*) malloc (sizeof(Node));
+	strcpy(new->domain, domain);
+	strcpy(new->ip, ip);
+	new->next = NULL;
+	if(head == NULL){ head = new; }
+	else{
+		new->next = head;
+		head = new;
+	}
+	return head;
+} 
 
 int error(char *msg){
 	perror(msg);
@@ -44,7 +40,6 @@ int error(char *msg){
 
 int main(int argc, char const *argv[])
 {	
-	setup();
 	int bytecount;
 	char buf[MAX];
 	char buf2[MAX];
@@ -70,13 +65,23 @@ int main(int argc, char const *argv[])
 		bytecount = recvfrom(server_fd, &buf, MAX, MSG_WAITALL, (SA*)&clientaddr, &len);
 
 		//EXTRA FOR NS LOOKUP
+		int found = 0;
 		for(Node* temp = head; temp != NULL; temp = temp->next){
 			if(strcmp(temp->domain,buf) == 0){
 				strcpy(buf2,temp->ip);
+				found = 1;
 				break;
 			}
-			strcpy(buf2,"NOT FOUND");
 		}
+		printf("FOUND %d\n",found );
+		if(found == 0) {
+			struct hostent *getAddr = gethostbyname(buf);
+			struct in_addr **addrlist = (struct in_addr **)getAddr->h_addr_list;
+			char *hostaddress = inet_ntoa(*addrlist[0]);
+			head = insert(head, buf, hostaddress);
+			strcpy(buf2, hostaddress);
+		}
+
 		//REPLACE SENDING BUF WITH IP ADDRESS
 
 		sendto(server_fd, buf2, MAX, MSG_WAITALL, (SA*)&clientaddr, sizeof(clientaddr));
