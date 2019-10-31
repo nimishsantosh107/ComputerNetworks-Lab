@@ -18,7 +18,7 @@ int error(char *msg){
 int main(int argc, char const *argv[])
 {
 	int server_fd, client_fd;
-	struct sockaddr_in servaddr, clientaddr; 
+	struct sockaddr_in servaddr, clientaddr;
 	int n;
 	char buf[MAX];	
 
@@ -35,7 +35,7 @@ int main(int argc, char const *argv[])
 	if ((bind(server_fd, (SA*)&servaddr, sizeof(servaddr))) != 0) error("BIND ERROR");
 
     //LISTEN ON PORT
-	if ((listen(server_fd, 5)) != 0) error("\033[0;31mLISTEN ERROR");
+	if ((listen(server_fd, 5)) != 0) error("LISTEN ERROR");
 	printf("SERVER LISTENING ON PORT 4000\n\n");
 
     //ACCEPT CONNECTION
