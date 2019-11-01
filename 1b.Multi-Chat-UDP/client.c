@@ -44,7 +44,7 @@ int main(int argc, char const *argv[])
 	}else{
 		while(1){
 			unsigned int len = sizeof(servaddr);
-			bytecount = recvfrom(sock_fd, &buf, MAX, MSG_DONTWAIT, (SA*)&servaddr, &len);
+			bytecount = recvfrom(sock_fd, buf, MAX, MSG_DONTWAIT, (SA*)&servaddr, &len);
 			buf[bytecount] = '\0';
 			printf("%s", buf);
 			bzero(buf, MAX); 

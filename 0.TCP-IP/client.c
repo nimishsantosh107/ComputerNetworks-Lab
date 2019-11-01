@@ -43,7 +43,7 @@ int main(int argc, char const *argv[])
 	write(sock_fd, buf, sizeof(buf));
 	bzero(buf, MAX);
 	//SERVER
-	read(sock_fd ,&buf, sizeof(buf));
+	read(sock_fd ,buf, sizeof(buf));
 	printf("SERVER: %s\n", buf);
 	bzero(buf, MAX);
 

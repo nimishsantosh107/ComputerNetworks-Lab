@@ -44,7 +44,7 @@ int main(int argc, char const *argv[])
 
     //CLIENT
     bzero(buf, MAX);
-	read(client_fd ,&buf, sizeof(buf));
+	read(client_fd ,buf, sizeof(buf));
 	printf("CLIENT: %s", buf);
 	bzero(buf, MAX);
 	//SERVER(THIS)

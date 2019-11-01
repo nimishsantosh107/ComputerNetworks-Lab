@@ -37,7 +37,7 @@ int main(int argc, char const *argv[])
 
 	//RECIEVE DATA
 	unsigned int len = sizeof(clientaddr);
-	bytecount = recvfrom(server_fd, &buf, MAX, MSG_WAITALL, (SA*)&clientaddr, &len);
+	bytecount = recvfrom(server_fd, buf, MAX, MSG_WAITALL, (SA*)&clientaddr, &len);
 	buf[bytecount] = '\0';
 
 	printf("%s\n", buf);
